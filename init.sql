@@ -94,9 +94,9 @@ DROP TABLE IF EXISTS `test_hubs`;
 
 CREATE TABLE `test_hubs` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `ip` char(20) NOT NULL COMMENT '关键字',
+  `ip` char(20) NOT NULL COMMENT '节点ip',
   `androidConnect` tinyint(1) NOT NULL DEFAULT '0',
-  `port` char(10) NOT NULL DEFAULT '3456' COMMENT '参数长度',
+  `port` char(10) NOT NULL DEFAULT '3456' COMMENT '节点端口',
   `status` int(2) DEFAULT '1',
   `ext_info` longtext,
   PRIMARY KEY (`id`)
@@ -109,7 +109,7 @@ DROP TABLE IF EXISTS `test_keyword`;
 CREATE TABLE `test_keyword` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `keyword` char(20) NOT NULL COMMENT '关键字',
-  `paraCount` int(10) NOT NULL DEFAULT '1' COMMENT '参数长度',
+  `paraCount` int(10) NOT NULL DEFAULT '1' COMMENT '参数数量',
   `status` int(1) DEFAULT '1',
   `template` longtext NOT NULL COMMENT '模板，如：driver.element_by_partial_link_text("$para1").click()',
   `elementTemplate` longtext,
@@ -190,3 +190,4 @@ insert into `test_keyword` (`id`, `keyword`, `paraCount`, `template`, `elementTe
 insert into `test_keyword` (`id`, `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('26','选择全部','2','extend.extend().select_all(driver,[\"$para1\",\"$para2\"])','driver.element_by_$para1(\"$para2\")','选择全部|id@@select','对下拉框，选择所有选项','1');
 insert into `test_keyword` (`id`, `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('27','点击全部','2','extend.extend().check_all(driver,[\"$para1\",\"$para2\"])','driver.element_by_$para1(\"$para2\")','点击全部|id@@CheckBox','对多选框，选择所有选项','1');
 insert into `test_keyword` (`id`, `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('28','切换窗口','1','extend.extend().switchWindow(driver)',NULL,'切换窗口','当浏览器弹出新的窗口时，切换到另一个窗口进行操作','1');
+insert into `test_keyword` (`id`, `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('29','验证标题','1','extend.extend().assert_title(driver，"$para1")',NULL,'验证标题|百度地图','验证页面的title中是否包含预期文字','1');
