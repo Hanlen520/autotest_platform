@@ -21,23 +21,17 @@ class util():
 
     def screenshot(self,screenShotType, caseNo):
 
+        screen_shot_path = config.screen_shot_path
         nowTime = time.strftime("%Y-%m-%d_%H_%M_%S", time.localtime())
-        if platform.system() == 'Windows':
-            screen_shot_path = config.screen_shot_path
-            screen_shot_path1 = 'static\\screenshot\\'
-            log.log().logger.info(screen_shot_path)
-            normalfilename =  screen_shot_path + 'normalScreenShot\\'  + str(caseNo)+'_success' + nowTime + '.jpg'
-            errorfilename =  screen_shot_path + 'errorScreenShot\\'  + str(caseNo)+'_error' + nowTime + '.jpg'
-            normalfilename1 =  '\\' +screen_shot_path1 + '\\' + 'normalScreenShot' + '\\' + str(caseNo)+'_success' + nowTime + '.jpg'
-            errorfilename1 = '\\' + screen_shot_path1 + '\\' + 'errorScreenShot' + '\\' + str(caseNo)+'_error' + nowTime + '.jpg'
-        else:
-            screen_shot_path = config.screen_shot_path
-            screen_shot_path1 = 'static/screenshot'
-            normalfilename = screen_shot_path  + 'normalScreenShot' + '/'+ str(caseNo)+'_success' + nowTime + '.jpg'
-            errorfilename = screen_shot_path  + 'errorScreenShot' + '/' + str(caseNo)+'_error' + nowTime + '.jpg'
-            normalfilename1 =  '/' + screen_shot_path1 + '/' + 'normalScreenShot' + '/' + str(
-                caseNo) + '_success' + nowTime + '.jpg'
-            errorfilename1 =  '/' + screen_shot_path1 + '/' + 'errorScreenShot' + '/' + str(caseNo) + '_error' + nowTime + '.jpg'
+        normalfile = str(caseNo)+'_success' + nowTime + '.png'
+        errorfile = str(caseNo)+'_error' + nowTime + '.png'
+
+        normalfilename = os.path.join(screen_shot_path,'normalScreenShot',normalfile)
+        normalfilename1 = os.path.join('static','screenshot','normalScreenShot',normalfile)
+
+        errorfilename = os.path.join(screen_shot_path,'errorScreenShot',errorfile)
+        errorfilename1 = os.path.join('static','screenshot','errorScreenShot',errorfile)
+
         if screenShotType == 'error':
             return errorfilename,errorfilename1
         else:
@@ -68,3 +62,4 @@ class util():
         preosign = preosign.encode('utf-8')
         m.update(preosign)
         return m.hexdigest()
+
