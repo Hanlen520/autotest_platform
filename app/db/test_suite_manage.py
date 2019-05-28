@@ -45,24 +45,33 @@ class test_suite_manage:
         log.log().logger.info(result)
         return result
 
-    def show_test_suites(self,conditionList, valueList, fieldlist,rows):
-        fieldlist=[]
-        if len(fieldlist)==0:
-            fieldlist = ['id',  'name', 'status', 'run_type','description','batchId']
+    def show_test_suites(self, conditionList, valueList, fieldlist, rows):
+        fieldlist = []
+        if len(fieldlist) == 0:
+            fieldlist = ['id', 'name', 'status', 'run_type', 'description', 'batchId']
         search_value = fieldlist[0]
         log.log().logger.info(fieldlist)
-        for i in range(1,len(fieldlist)):
-            search_value = search_value + ','+fieldlist[i]
-        condition = ''
+        for i in range(1, len(fieldlist)):
+            search_value = search_value + ',' + fieldlist[i]
+        condition = 'isDeleted = 0 '
         for i in range(len(conditionList)):
-            if i == 0:
-                condition += str(conditionList[i]) +' like "%'+str(valueList[i])+'%"'
-            else:
-                condition += ' and '+str(conditionList[i]) +' like "%'+str(valueList[i])+'%"'
+            if len(valueList[i]):
+                if conditionList[i] == 'run_type':
+                    if valueList[i] == 'Chrome':
+                        valueList[i] = 2
+                    elif valueList[i] == 'Android':
+                        valueList[i] = 0
+                    elif valueList[i] == 'iOS':
+                        valueList[i] = 1
+                if conditionList[i] in ('id', 'status', 'run_type'):
+                    condition += ' and ' + str(conditionList[i]) + ' = "' + str(valueList[i]) + '"'
+                else:
+                    condition += ' and ' + str(conditionList[i]) + ' like "%' + str(valueList[i]) + '%"'
         results = []
-        sql = 'select ' + str(search_value) + ' from test_suite where ' + str(condition) + ' and isDeleted = 0 order by id desc limit '+ str(rows)+';'
+        sql = 'select ' + str(search_value) + ' from test_suite where ' + str(
+            condition) + ' order by id desc limit ' + str(rows) + ';'
         cases = useDB.useDB().search(sql)
-        log.log().logger.info('cases : %s '%cases)
+        log.log().logger.info('cases : %s ' % cases)
         for i in range(len(cases)):
             result = {}
             result['id'] = cases[i][0]
@@ -107,7 +116,14 @@ class test_suite_manage:
         result = self.show_test_suites(['id'],[id],[],1)
         if len(result):
             result=result[0]
-            self.new_test_suite(result["name"],result["run_type"],result["description"],batchId )
+            run_type = ''
+            if result["run_type"] == 'Chrome':
+                run_type = 2
+            elif result["run_type"] == 'Android':
+                run_type = 0
+            elif result["run_type"] == 'iOS':
+                run_type = 1
+            self.new_test_suite(result["name"],str(run_type),result["description"],batchId )
             result = 1
         else:
             result = 0

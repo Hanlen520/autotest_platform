@@ -9,23 +9,25 @@ class test_batch_manage(object):
         self.status = 0
         self.name = ''
 
-    def new_test_batch(self,test_suite_id, test_case_id,name, steps,browser_type='Chrome'):
+    def new_test_batch(self,test_suite_id, test_case_id,name, steps,browser_type='Chrome',status='-1'):
         log.log().logger.info('%s,%s,%s,%s' %(test_case_id,test_suite_id,name,steps))
         steps.replace('"','""')
         import re
         steps = re.sub('"', '""', steps)
-        sql = string.Template('insert into test_batch (test_suite_id, test_case_id, name,steps,browser_type) values ("$test_suite_id","$test_case_id","$name","$steps","$browser_type");')
-        sql = sql.substitute(test_suite_id = test_suite_id, test_case_id = test_case_id,steps=steps, name = name,browser_type=browser_type)
+        steps = str(steps).replace('\\', '\\\\')
+        sql = string.Template('insert into test_batch (test_suite_id, test_case_id, name,steps,browser_type,status) values ("$test_suite_id","$test_case_id","$name","$steps","$browser_type","$status");')
+        sql = sql.substitute(test_suite_id = test_suite_id, test_case_id = test_case_id,steps=steps, name = name,browser_type=browser_type,status=status)
         useDB.useDB().insert(sql)
 
-    def new_test_batch_IP(self, test_suite_id, test_case_id, name, steps,ip):
+    def new_test_batch_IP(self, test_suite_id, test_case_id, name, steps,ip,status='-1'):
         log.log().logger.info('%s,%s,%s,%s' %(test_case_id, test_suite_id, name, steps))
         steps.replace('"', '""')
         import re
         steps = re.sub('"', '""', steps)
+        steps = str(steps).replace('\\', '\\\\')
         sql = string.Template(
-            'insert into test_batch (test_suite_id, test_case_id, name,steps,ip) values ("$test_suite_id","$test_case_id","$name","$steps","$ip");')
-        sql = sql.substitute(test_suite_id=test_suite_id, test_case_id=test_case_id, steps=steps, name=name,ip=ip)
+            'insert into test_batch (test_suite_id, test_case_id, name,steps,ip,status) values ("$test_suite_id","$test_case_id","$name","$steps","$ip","$status");')
+        sql = sql.substitute(test_suite_id=test_suite_id, test_case_id=test_case_id, steps=steps, name=name,ip=ip,status=status)
         useDB.useDB().insert(sql)
 
     def search_test_batch(self,id):
@@ -90,6 +92,8 @@ class test_batch_manage(object):
     def update_test_batch(self,id,fieldlist,valuelist):
         update_value = ''
         for i in range(len(fieldlist)):
+            if fieldlist[i]=='steps':
+                valuelist[i]=valuelist[i].replace('\\','\\\\')
             update_value = update_value+' %s = "%s"' %(str(fieldlist[i]),str(valuelist[i]))
             if i < len(fieldlist)-1 :
                 update_value = update_value+','
@@ -100,7 +104,7 @@ class test_batch_manage(object):
         if type =='all':
             sql = 'select id,test_case_id from test_batch where test_suite_id = %s ;' % str(id)
         elif type == 'part':
-            sql = 'select id,test_case_id from  test_batch where test_suite_id = %s and status in (2,3,4);' % (str(id))
+            sql = 'select id,test_case_id from  test_batch where test_suite_id = %s and status in (-1,2,3,4);' % (str(id))
         result = useDB.useDB().search(sql)
         if len(result):
             for case in result:
@@ -137,6 +141,7 @@ class test_batch_manage(object):
                     steps.replace('"', '""')
                     import re
                     steps = re.sub('"', '""', steps)
+                    steps = str(steps).replace('\\', '\\\\')
                     sql = string.Template('update test_batch set status=0, steps = "$steps" where id = $id and ip="$ip"  ;')
                     sql = sql.substitute(steps=steps, id= case[0],ip=ip)
                     useDB.useDB().insert(sql)
@@ -160,7 +165,7 @@ class test_batch_manage(object):
                         if browser_type not in support_browser:
                             log.log().logger.info('%s browser is not support!' %browser_type)
                         else:
-                            self.new_test_batch(test_suite_id, test_case_id,steps[0][0], steps[0][1],browser_type=browser_type)
+                            self.new_test_batch(test_suite_id, test_case_id,steps[0][0], steps[0][1],browser_type=browser_type,status='0')
                 else:
                     log.log().logger.info('test case not exist!')
                 result = 1
@@ -179,7 +184,7 @@ class test_batch_manage(object):
                 steps = test_case_manage.test_case_manage().search_test_case([test_case_id], ['name', 'steps'])
                 log.log().logger.info('%s, %s,%s' %(steps, steps[0][0], steps[0][1]))
                 if len(steps):
-                    self.new_test_batch_IP(test_suite_id, test_case_id, steps[0][0], steps[0][1],ip)
+                    self.new_test_batch_IP(test_suite_id, test_case_id, steps[0][0], steps[0][1],ip,status='0')
                 else:
                     log.log().logger.info('test case not exist!')
                 result = 1
@@ -243,8 +248,10 @@ class test_batch_manage(object):
                         result0 = '2-执行失败'
                     elif cases[i][3] == 3:
                         result0 = '3-无法执行'
+                    elif cases[i][3] == -1:
+                        result0 = '-1-默认'
                     else:
-                        result0 = 'cases[i][3]'
+                        result0 = cases[i][3]
                 else:
                     result0 = cases[i][j]
                 result[fieldlist[j]]=result0
@@ -317,6 +324,7 @@ class test_batch_manage(object):
                         check_result += ','
                     check_result +=(str(test_suite_id[0]))
                     test_suite_list.append(test_suite_id[0])
+                    # print(check_result)
         return check_result,test_suite_list
 
 

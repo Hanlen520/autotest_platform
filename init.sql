@@ -194,3 +194,43 @@ insert into `test_keyword` ( `keyword`, `paraCount`, `template`, `elementTemplat
 insert into `test_keyword` ( `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('Chrome','1','Chrome',NULL,'Chrome','初始化Chrome 浏览器','1');
 insert into `test_keyword` ( `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('公共方法','1','	$para1',NULL,'公共方法|游客登录','调用公共方法','1');
 insert into `test_keyword` ( `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('填写文件','3','extend.extend().fill_file(driver,[\"$para1\",\"$para2\"],\"$para3\")','driver.element_by_$para1(\"$para2\")','填写文件|id@@input_box@@ghw','在指定元素中输入文件路径，可按 id、css、xpath、class、name、text 等方式定位元素','1');
+insert into `test_keyword` ( `keyword`, `paraCount`, `template`, `elementTemplate`, `example`, `description`, `status`) values('复制','4','extend.extend().copy_from_another_element(driver,[\"$para1\",\"$para2\"],[\"$para3\",\"$para4\"])','driver.element_by_$para1(\"$para2\")','复制|id@@kw@@id@@su','将后一个元素的内容复制填入到前一个元素中','1');
+
+
+
+/*Table structure for table `api_new` */
+
+DROP TABLE IF EXISTS `api_new`;
+
+CREATE TABLE `api_new` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product` char(20) NOT NULL DEFAULT 'SDK' COMMENT 'SDK/CG',
+  `module` char(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `name` char(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `url` char(50) NOT NULL,
+  `paras` text NOT NULL,
+  `osign_list` char(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `description` char(50) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT '1' COMMENT '1:正常， 0：已删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `test_minder`;
+
+CREATE TABLE `test_minder` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT 'defaultname',
+  `module` varchar(50) DEFAULT 'defaultmodule',
+  `description` varchar(50) DEFAULT NULL,
+  `content` text,
+  `batchId` char(40) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
+
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
